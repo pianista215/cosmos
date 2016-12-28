@@ -194,8 +194,88 @@ with Stats {
 
   lazy val logger = org.slf4j.LoggerFactory.getLogger(getClass)
 
+  val CosmosHttpListener: com.twitter.finagle.Stack.Params => com.twitter.finagle.server.Listener[Any, Any] = { params =>
+    new com.twitter.finagle.server.Listener[Any, Any] {
+      override def listen(
+        addr: java.net.SocketAddress
+      )(
+        serveTransport: com.twitter.finagle.transport.Transport[Any, Any] => Unit
+      ): com.twitter.finagle.ListeningServer = {
+        val com.twitter.finagle.param.Label(label) = params[com.twitter.finagle.param.Label]
+        val pipelineFactory = com.twitter.finagle.http.Http()
+          .maxRequestSize(params[com.twitter.finagle.http.param.MaxRequestSize].size)
+          .maxResponseSize(params[com.twitter.finagle.http.param.MaxResponseSize].size)
+          .streaming(params[com.twitter.finagle.http.param.Streaming].enabled)
+          .decompressionEnabled(params[com.twitter.finagle.http.param.Decompression].enabled)
+          .compressionLevel(params[com.twitter.finagle.http.param.CompressionLevel].level)
+          .maxInitialLineLength(params[com.twitter.finagle.http.param.MaxInitialLineSize].size)
+          .maxHeaderSize(params[com.twitter.finagle.http.param.MaxHeaderSize].size)
+          .server(com.twitter.finagle.ServerCodecConfig(label, new java.net.SocketAddress{}))
+          .pipelineFactory
+
+        println("YOU ARE CALLING MY LISTENER THAT CAN MODIFY THE PIPELINE!!!!!")
+
+        com.twitter.finagle.netty3.Netty3Listener(
+          new org.jboss.netty.channel.ChannelPipelineFactory {
+            override def getPipeline() = {
+              println("OVERRIDE THE PIPELINE. YES!")
+              val pipeline = pipelineFactory.getPipeline()
+              pipeline.addLast(
+                "cosmosOwns",
+                new org.jboss.netty.channel.SimpleChannelUpstreamHandler {
+                  private val content = Array[Byte]('H', 'e', 'l', 'l', 'o', ' ', 'W', 'o', 'r', 'l', 'd')
+
+                  override def messageReceived(
+                    ctx: org.jboss.netty.channel.ChannelHandlerContext,
+                    event: org.jboss.netty.channel.MessageEvent
+                  ): Unit = {
+                    event.getMessage match {
+                      case req: org.jboss.netty.handler.codec.http.HttpRequest if req.getUri.contains("helloworld") =>
+                        val response = new org.jboss.netty.handler.codec.http.DefaultHttpResponse(
+                          org.jboss.netty.handler.codec.http.HttpVersion.HTTP_1_1,
+                          org.jboss.netty.handler.codec.http.HttpResponseStatus.OK
+                        )
+                        response.setContent(
+                          org.jboss.netty.buffer.ChannelBuffers.wrappedBuffer(content)
+                        )
+                        response.headers.set(
+                          org.jboss.netty.handler.codec.http.HttpHeaders.Names.CONTENT_TYPE,
+                          "text/plain"
+                        )
+                        response.headers.set(
+                          org.jboss.netty.handler.codec.http.HttpHeaders.Names.CONTENT_LENGTH,
+                          response.getContent().readableBytes()
+                        )
+
+                        val future = org.jboss.netty.channel.Channels.future(event.getChannel())
+                        future.addListener(org.jboss.netty.channel.ChannelFutureListener.CLOSE)
+                        org.jboss.netty.channel.Channels.write(ctx, future, response)
+                      case _ =>
+                        super.messageReceived(ctx, event)
+                    }
+                  }
+                }
+              )
+
+              pipeline
+            }
+          },
+          params
+        ).listen(addr)(serveTransport)
+      }
+    }
+  }
+
+  val CosmosHttpImpl: Http.HttpImpl = Http.HttpImpl(
+    Http.Netty3Impl.clientTransport,
+    Http.Netty3Impl.serverTransport,
+    Http.Netty3Impl.transporter,
+    CosmosHttpListener
+  )
+
+
   def main(): Unit = {
-    for (httpServer <- startServer) {
+    for (httpServer <- startServer()) {
       logger.info(s"HTTP server started on ${httpServer.boundAddress}")
       closeOnExit(httpServer)
       Await.result(httpServer)
@@ -212,6 +292,7 @@ with Stats {
 
       Http
         .server
+        .configured(CosmosHttpImpl)
         .serve(iface, startCosmos(NullStatsReceiver)) // TODO: User a better stats receiver
     }
   }
