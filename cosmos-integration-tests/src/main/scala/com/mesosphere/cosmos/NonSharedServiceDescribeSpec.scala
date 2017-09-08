@@ -5,7 +5,7 @@ import com.mesosphere.cosmos.http.TestContext
 import org.scalatest.FeatureSpec
 import org.scalatest.Matchers
 
-final class NonSharedServiceDescribeSpec extends FeatureSpec with Matchers {
+final class NonSharedServiceDescribeSpec extends FeatureSpec with Matchers with IntegrationBeforeAndAfterAll{
   private[this] implicit val testContext = TestContext.fromSystemProperties()
 
   feature("The service/describe endpoint") {

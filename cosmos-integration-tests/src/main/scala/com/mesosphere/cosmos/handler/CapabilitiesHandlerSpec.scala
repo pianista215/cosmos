@@ -1,5 +1,6 @@
 package com.mesosphere.cosmos.handler
 
+import com.mesosphere.cosmos.IntegrationBeforeAndAfterAll
 import com.mesosphere.cosmos.http.CosmosRequests
 import com.mesosphere.cosmos.rpc.MediaTypes
 import com.mesosphere.cosmos.rpc.v1.circe.Decoders._
@@ -12,7 +13,7 @@ import io.circe.jawn._
 import org.scalatest.FreeSpec
 import scala.util.Right
 
-final class CapabilitiesHandlerSpec extends FreeSpec {
+final class CapabilitiesHandlerSpec extends FreeSpec with IntegrationBeforeAndAfterAll{
 
   "The capabilities handler should return a document" in {
     val response = CosmosClient.submit(CosmosRequests.capabilities)

@@ -10,7 +10,7 @@ import com.twitter.finagle.http.Status
 import org.scalatest.FeatureSpec
 import org.scalatest.Matchers
 
-final class ServiceDescribeSpec extends FeatureSpec with Matchers {
+final class ServiceDescribeSpec extends FeatureSpec with Matchers with IntegrationBeforeAndAfterAll{
   private[this] implicit val testContext = TestContext.fromSystemProperties()
 
   feature("The service/describe endpoint") {

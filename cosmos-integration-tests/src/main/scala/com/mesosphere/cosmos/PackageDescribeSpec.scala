@@ -16,7 +16,7 @@ import org.scalatest.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks
 
 final class PackageDescribeSpec
-  extends FreeSpec with TableDrivenPropertyChecks with Matchers {
+  extends FreeSpec with TableDrivenPropertyChecks with Matchers with IntegrationBeforeAndAfterAll{
 
   import PackageDescribeSpec._
 

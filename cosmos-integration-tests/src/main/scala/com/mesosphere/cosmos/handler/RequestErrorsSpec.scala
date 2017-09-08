@@ -1,5 +1,6 @@
 package com.mesosphere.cosmos.handler
 
+import com.mesosphere.cosmos.IntegrationBeforeAndAfterAll
 import com.mesosphere.cosmos.http.CompoundMediaTypeParser
 import com.mesosphere.cosmos.http.HttpRequest
 import com.mesosphere.cosmos.http.PackageRpcPath
@@ -16,7 +17,7 @@ import io.circe.syntax._
 import org.scalatest.FreeSpec
 import scala.util.Right
 
-class RequestErrorsSpec extends FreeSpec {
+class RequestErrorsSpec extends FreeSpec with IntegrationBeforeAndAfterAll{
 
   "Cosmos Error Handling" - {
     "Applicative handling" - {

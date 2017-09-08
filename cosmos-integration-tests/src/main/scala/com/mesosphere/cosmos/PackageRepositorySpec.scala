@@ -24,7 +24,7 @@ import org.jboss.netty.handler.codec.http.HttpMethod
 import org.scalatest.FeatureSpec
 import org.scalatest.Matchers
 
-class PackageRepositorySpec extends FeatureSpec with Matchers {
+class PackageRepositorySpec extends FeatureSpec with Matchers with IntegrationBeforeAndAfterAll{
 
   feature("The package/repository/list endpoint") {
     scenario("The user should be able to list added repositories") {

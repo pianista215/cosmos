@@ -9,7 +9,7 @@ import java.util.UUID
 import org.scalatest.FeatureSpec
 import org.scalatest.Matchers
 
-final class PackageListIntegrationSpec extends FeatureSpec with Matchers {
+final class PackageListIntegrationSpec extends FeatureSpec with Matchers with IntegrationBeforeAndAfterAll{
 
   feature("The package/list endpoint") {
     scenario("should list installed packages") {

@@ -1,5 +1,6 @@
 package com.mesosphere.cosmos.handler
 
+import com.mesosphere.cosmos.IntegrationBeforeAndAfterAll
 import com.mesosphere.cosmos.error.CosmosException
 import com.mesosphere.cosmos.error.MarathonAppNotFound
 import com.mesosphere.cosmos.http.CosmosRequests
@@ -29,7 +30,7 @@ import org.scalatest.concurrent.Eventually
 import org.scalatest.time.SpanSugar
 import scala.util.Right
 
-final class UninstallHandlerSpec extends FreeSpec with Eventually with SpanSugar {
+final class UninstallHandlerSpec extends FreeSpec with Eventually with SpanSugar with IntegrationBeforeAndAfterAll{
 
   import CosmosIntegrationTestClient._
   import UninstallHandlerSpec._

@@ -13,7 +13,7 @@ import org.scalatest.Assertion
 import org.scalatest.FreeSpec
 import org.scalatest.prop.TableDrivenPropertyChecks
 
-final class PackageSearchSpec extends FreeSpec {
+final class PackageSearchSpec extends FreeSpec with IntegrationBeforeAndAfterAll{
 
   import PackageSearchSpec._
 
