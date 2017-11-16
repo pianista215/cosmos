@@ -1,0 +1,15 @@
+{
+  "assets": {
+    "container": {
+      "docker": {
+        "crossdata": "qa.stratio.com/stratio/crossdata-scala211:2.9.0",
+        "spark": "qa.stratio.com/stratio/stratio-spark:2.1.0.1"
+      }
+    }
+  },
+  "images": {
+    "icon-small": "http://assets.stratio.com/logos/logo_stratio_universe.png",
+    "icon-medium": "http://assets.stratio.com/logos/logo_stratio_universe.png",
+    "icon-large": "http://assets.stratio.com/logos/logo_stratio_universe.png"
+  }
+}

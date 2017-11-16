@@ -1,0 +1,340 @@
+{
+  "id": "/{{general.name}}",
+  "cmd": null,
+  "cpus": {{general.cpus}},
+  "mem": {{general.mem}},
+  "disk": 0,
+  "instances": {{general.instances}},
+  "container": {
+    "type": "DOCKER",
+    "volumes": [],
+    "docker": {
+      "image": "{{resource.assets.container.docker.crossdata}}",
+      {{#network_segmentation.use_network_segmentation}}
+      "network": "USER",
+      "portMappings": [
+        {
+          "containerPort": 8000,
+          "name": "13422"
+        },
+        {
+          "containerPort": 8001,
+          "name": "13420"
+        },
+        {
+          "containerPort": 8002,
+          "name": "5701"
+        },
+        {
+          "containerPort": 8003,
+          "name": "13423"
+        }
+        {{#spark.spark_ui_enabled}}
+        ,{
+        "containerPort": 8004,
+        "name": "4040"
+        }
+        {{/spark.spark_ui_enabled}}
+      ],
+      {{/network_segmentation.use_network_segmentation}}
+      {{^network_segmentation.use_network_segmentation}}
+      "network": "HOST",
+      {{/network_segmentation.use_network_segmentation}}
+      "privileged": false,
+      "parameters": [{"key": "volume", "value": "/etc/krb5.conf:/etc/krb5.conf:ro"}],
+      "forcePullImage": {{general.force_pull_image}}
+    }
+  },
+  {{#network_segmentation.use_network_segmentation}}
+  "ipAddress": {
+    "networkName": "{{network_segmentation.crossdata_network_name}}"
+  },
+  {{/network_segmentation.use_network_segmentation}}
+  {{^network_segmentation.use_network_segmentation}}
+  "portDefinitions": [
+      {
+        "port": 0,
+        "protocol": "tcp",
+        "name": "13422",
+        "labels": {}
+      },
+      {
+        "port": 0,
+        "protocol": "tcp",
+        "name": "13420",
+        "labels": {}
+      },
+      {
+        "port": 0,
+        "protocol": "tcp",
+        "name": "5701",
+        "labels": {}
+      },
+      {
+        "port": 0,
+        "protocol": "tcp",
+        "name": "13423",
+        "labels": {}
+      }
+      {{#spark.spark_ui_enabled}}
+      ,{
+        "port": 0,
+        "protocol": "tcp",
+        "name": "4040",
+        "labels": {}
+      }
+      {{/spark.spark_ui_enabled}}
+  ],
+  {{/network_segmentation.use_network_segmentation}}
+  "env": {
+    {{#security.enabled}}
+    "XD_SECURITY_ENABLED": "true",
+    "VAULT_HOST": "{{security.vault_host}}",
+    "VAULT_PORT": "{{security.vault_port}}",
+    "TENANT_NAME": "{{general.name}}",
+
+    {{#security.use_dynamic_authentication}}
+        "APPROLE": {"secret": "role"},
+    {{/security.use_dynamic_authentication}}
+    {{^security.use_dynamic_authentication}}
+        "VAULT_TOKEN": "{{security.vault_token}}",
+    {{/security.use_dynamic_authentication}}
+
+    {{#hdfs.hdfs_conf_url}}
+        "HADOOP_CONFIG_URL": "{{hdfs.hdfs_conf_url}}",
+    {{/hdfs.hdfs_conf_url}}
+    "HADOOP_SECURITY_AUTH": "{{hdfs.hadoop_security_auth}}",
+    "HADOOP_FS_DEFAULT_NAME": "{{hdfs.hadoop_fs_name}}",
+    "HADOOP_RPC_PROTECTION": "{{hdfs.hadoop_rpc_protection}}",
+    "HADOOP_DFS_ENCRYPT_DATA_TRANSFER": "{{hdfs.hadoop_dfs_encrypt_data_transfer}}",
+    "HADOOP_SECURITY_TOKEN_USE_IP": "{{hdfs.hadoop_security_token_use_ip}}",
+    "HADOOP_NAMENODE_KERBEROS_PRINCIPAL": "{{hdfs.hadoop_namenode_krb_principal}}",
+    "HADOOP_NAMENODE_KERBEROS_PRINCIPAL_PATTERN": "{{hdfs.hadoop_namnode_krb_principal_pattern}}",
+    "HADOOP_DFS_ENCRYPT_DATA_TRANSFER_CIPHER_SUITES": "{{hdfs.hadoop_dfs_encrypt_data_transfer_cipher_suites}}",
+    "HADOOP_DFS_ENCRYPT_DATA_CIPHER_KEY_BITLENGTH": "{{hdfs.hadoop_dfs_encrypt_data_transfer_cipher_key_bitlength}}",
+    "CROSSDATA_SERVER_CONFIG_KERBEROS_RENEWAL_INTERVAL": "{{security.crossdata_kerberos_renewal_interval}}",
+    "XD_PLUGIN_INSTANCE": "{{general.name}}",
+    "XD_PLUGIN_ZK_CONNECT": "{{security.crossdata_plugin_zk_connect}}",
+    "XD_PLUGIN_LDAP_HOST": "{{security.crossdata_plugin_ldap_host}}",
+    "XD_PLUGIN_LDAP_PORT": "{{security.crossdata_plugin_ldap_port}}",
+    "XD_PLUGIN_LDAP_USER_DOMAIN": "{{security.crossdata_plugin_ldap_user_domain}}",
+    "XD_PLUGIN_LDAP_GROUP_DOMAIN": "{{security.crossdata_plugin_ldap_group_domain}}",
+    "XD_PLUGIN_KAFKA_TOPIC": "{{security.crossdata_plugin_kafka_topic}}",
+    "XD_PLUGIN_KAFKA_BOOTSTRAP": "{{security.crossdata_plugin_kafka_bootstrap}}",
+    "XD_PLUGIN_CACHE_ENABLED": "{{security.enable_crossdata_plugin_cache}}",
+    "XD_PLUGIN_MGMT_PRINCIPAL": "{{security.gosec_plugin_management_principal}}",
+    "XD_PLUGIN_SSO_PRINCIPAL": "{{security.gosec_plugin_sso_principal}}",
+    "XD_PLUGIN_ZOOKEEPER_WATCHERS": "{{security.zk_watchers_enabled}}",
+
+    "CROSSDATA_SERVER_AKKA_REMOTE_NETTY_SSL_ENABLE_SSL": "{{security.akka_in_cluster_security}}",
+
+    {{#security.crossdata_cns_allowed}}
+      "CROSSDATA_SERVER_CONFIG_CN": "{{security.crossdata_cns_allowed}}",
+      "CROSSDATA_SERVER_TLS_HEADER_INFO": "on",
+      "CROSSDATA_SERVER_CONFIG_CN_ENABLED": "true",
+    {{/security.crossdata_cns_allowed}}
+
+    {{#security.gosec_auth}}
+      "GOSEC_VERSION": "{{security.gosec_version}}",
+    {{/security.gosec_auth}}
+
+    {{^security.gosec_auth}}
+      "DISABLE_GOSEC_AUTH": "disabled",
+    {{/security.gosec_auth}}
+
+    "CROSSDATA_SERVER_SPARK_EXECUTOR_CA_NAME": "{{security.ca-name-datastore}}",
+
+    {{/security.enabled}}
+
+    {{#service_discovery.enabled}}
+    "CROSSDATA_SERVER_SERVICE_DISCOVERY_ACTIVATED": "true",
+    "CROSSDATA_SERVER_SERVICE_DISCOVERY_URL": "{{service_discovery.zookeeper_connection_url}}",
+    "CROSSDATA_SERVER_SERVICE_DISCOVERY_CLUSTER_LEADER_DELAY": "{{service_discovery.interval_update}}",
+        {{#service_discovery.cluster-id}}
+        "CROSSDATA_SERVER_SERVICE_DISCOVERY_CLUSTER_ID":  "{{service_discovery.cluster-id}}",
+        {{/service_discovery.cluster-id}}
+    {{/service_discovery.enabled}}
+
+    {{#zookeeper_catalog.enabled}}
+    "XD_CATALOG": "Zookeeper",
+    "XD_CATALOG_PREFIX": "{{zookeeper_catalog.prefix}}",
+    "XD_CATALOG_ZOOKEEPER_CONNECTION_STRING": "{{zookeeper_catalog.zookeeper_connection_url}}",
+    "XD_CATALOG_ZOOKEEPER_CONNECTION_TIMEOUT": "{{zookeeper_catalog.connection_timeout}}",
+    "XD_CATALOG_ZOOKEEPER_SESSION_TIMEOUT": "{{zookeeper_catalog.session_timeout}}",
+    "XD_CATALOG_ZOOKEEPER_RETRY_ATTEMPS": "{{zookeeper_catalog.retry_attempts}}",
+    "XD_CATALOG_ZOOKEEPER_RETRY_INTERVAL": "{{zookeeper_catalog.retry_interval}}",
+    {{/zookeeper_catalog.enabled}}
+
+    "CROSSDATA_SERVER_SPARK_UI_ENABLED": "{{spark.spark_ui_enabled}}",
+
+    {{#spark.enabled}}
+
+    "CROSSDATA_SERVER_CONFIG_SPARK_MASTER": "{{spark.spark_master}}",
+    "CROSSDATA_SERVER_CONFIG_SPARK_EXECUTOR_MEMORY": "{{spark.executor_memory}}M",
+    "CROSSDATA_SERVER_CONFIG_SPARK_SQL_SHUFFLE_PARTITIONS": "{{spark.shuffle_partitions}}",
+
+    {{#spark.spark_docker_image}}
+    "CROSSDATA_SERVER_CONFIG_SPARK_MESOS_EXECUTOR_DOCKER_IMAGE": "{{spark.spark_docker_image}}",
+    {{/spark.spark_docker_image}}
+
+    {{#spark.spark_executor_home}}
+    "CROSSDATA_SERVER_CONFIG_SPARK_MESOS_EXECUTOR_HOME": "{{spark.spark_executor_home}}",
+    {{/spark.spark_executor_home}}
+
+    {{#spark.spark_local_dir}}
+    "CROSSDATA_SERVER_CONFIG_SPARK_LOCAL_DIR": "{{spark.spark_local_dir}}",
+    {{/spark.spark_local_dir}}
+
+    {{#spark.spark_docker_volume_mount}}
+      {{#spark.spark_local_dir}}
+        {{#security.enabled}}
+          "CROSSDATA_SERVER_CONFIG_SPARK_MESOS_EXECUTOR_DOCKER_VOLUMES": "{{spark.spark_docker_volume_mount}}:{{spark.spark_local_dir}}:rw,/etc/krb5.conf:/etc/krb5.conf:ro,/etc/pki/ca-trust/extracted/java/cacerts/:/etc/ssl/certs/java/cacerts:ro",
+        {{/security.enabled}}
+        {{^security.enabled}}
+          "CROSSDATA_SERVER_CONFIG_SPARK_MESOS_EXECUTOR_DOCKER_VOLUMES": "{{spark.spark_docker_volume_mount}}:{{spark.spark_local_dir}}:rw",
+        {{/security.enabled}}
+      {{/spark.spark_local_dir}}
+      {{^spark.spark_local_dir}}
+        {{#security.enabled}}
+          "CROSSDATA_SERVER_CONFIG_SPARK_MESOS_EXECUTOR_DOCKER_VOLUMES": "{{spark.spark_docker_volume_mount}}:/tmp:rw,/etc/krb5.conf:/etc/krb5.conf:ro,/etc/pki/ca-trust/extracted/java/cacerts/:/etc/ssl/certs/java/cacerts:ro",
+        {{/security.enabled}}
+        {{^security.enabled}}
+          "CROSSDATA_SERVER_CONFIG_SPARK_MESOS_EXECUTOR_DOCKER_VOLUMES": "{{spark.spark_docker_volume_mount}}:/tmp:rw",
+        {{/security.enabled}}
+      {{/spark.spark_local_dir}}
+    {{/spark.spark_docker_volume_mount}}
+
+    {{#spark.cores}}
+    "CROSSDATA_SERVER_CONFIG_SPARK_CORES_MAX": "{{spark.cores}}",
+    {{/spark.cores}}
+
+    {{#spark.autobroadcast_join_threshold}}
+    "CROSSDATA_SERVER_CONFIG_SPARK_SQL_AUTOBROADCASTJOINTHRESHOLD": "{{spark.autobroadcast_join_threshold}}",
+    {{/spark.autobroadcast_join_threshold}}
+
+    {{#spark.broadcast_join_timeout}}
+        "CROSSDATA_SERVER_CONFIG_SPARK_SQL_BROADCASTJOINTIMEOUT": "{{spark.broadcast_join_timeout}}",
+    {{/spark.broadcast_join_timeout}}
+
+    {{#spark.kryo_serializer_buffer_max}}
+    "CROSSDATA_SERVER_CONFIG_SPARK_KRYOSERIALIZER_BUFFER_MAX": "{{spark.kryo_serializer_buffer_max}}M",
+    {{/spark.kryo_serializer_buffer_max}}
+
+    "CROSSDATA_HDFS_DELEGATION_TOKEN_DISABLE_CACHE": "{{spark.disable_hdfs_delegation_token_cache}}",
+
+    {{#spark.mesos_security_enabled}}
+    "MESOS_SECURITY_ENABLED": "enabled",
+    {{/spark.mesos_security_enabled}}
+
+    {{#spark.mesos_role}}
+    "CROSSDATA_SERVER_CONFIG_SPARK_MESOS_ROLE": "{{spark.mesos_role}}",
+    {{/spark.mesos_role}}
+
+    {{/spark.enabled}}
+
+    {{#transport.server_request_timeout}}
+    "CROSSDATA_SERVER_HTTP_REQUEST_EXECUTION_TIMEOUT": "{{transport.server_request_timeout}}",
+    {{/transport.server_request_timeout}}
+
+    {{#transport.server_idle_timeout}}
+    "CROSSDATA_SERVER_HTTP_IDLE_TIMEOUT": "{{transport.server_idle_timeout}}",
+    {{/transport.server_idle_timeout}}
+
+    {{#transport.http_connection_pool_idle_timeout}}
+    "CROSSDATA_SERVER_HTTP_HOST_CONNECTION_POOL_IDLE_TIMEOUT": "{{transport.http_connection_pool_idle_timeout}}",
+    {{/transport.http_connection_pool_idle_timeout}}
+
+    {{#transport.http_parsing_max_content_length}}
+    "CROSSDATA_SERVER_AKKA_HTTP_SERVER_PARSING_MAX_CONTENT_LENGTH": "{{transport.http_parsing_max_content_length}}",
+    "CROSSDATA_DRIVER_AKKA_HTTP_PARSING_MAX_CONTENT_LENGTH": "{{transport.http_parsing_max_content_length}}",
+    {{/transport.http_parsing_max_content_length}}
+
+    {{#general.log_level}}
+    "CROSSDATA_LOG_LEVEL": "{{general.log_level}}",
+    {{/general.log_level}}
+
+    {{#general.storage_path}}
+    "CROSSDATA_STORAGE_PATH": "{{general.storage_path}}",
+    {{/general.storage_path}}
+
+    {{#network_segmentation.use_network_segmentation}}
+    "CROSSDATA_SERVER_NETWORK": "{{network_segmentation.crossdata_network_name}}",
+    "CROSSDATA_SERVER_SPARK_NETWORK": "{{network_segmentation.spark_network_name}}",
+    {{/network_segmentation.use_network_segmentation}}
+
+    "CROSSDATA_SERVER_SERIALIZATION_PARALLELISM": "{{general.streams_parallelism}}",
+
+    "DUMMY": ""
+  },
+  "healthChecks": [
+    {
+      "path": "/health/status/ecosystem",
+      "protocol": "HTTP",
+      "portIndex": 3,
+      "gracePeriodSeconds": 40,
+      "intervalSeconds": 120,
+      "timeoutSeconds": 20,
+      "maxConsecutiveFailures": 0,
+      "ignoreHttp1xx": false
+    },
+    {
+      "path": "/health/status/internal",
+      "protocol": "HTTP",
+      "portIndex": 3,
+      "gracePeriodSeconds": 60,
+      "intervalSeconds": 120,
+      "timeoutSeconds": 20,
+      "maxConsecutiveFailures": 1,
+      "ignoreHttp1xx": false
+    }
+  ],
+   {{#general.cluster_label_constraint}}
+      "constraints": [
+          ["label", "CLUSTER", "{{general.cluster_label_constraint}}"]
+      ],
+   {{/general.cluster_label_constraint}}
+   {{^general.cluster_label_constraint}}
+      "constraints": null,
+   {{/general.cluster_label_constraint}}
+
+   {{#general.accepted_resources_roles}}
+      "acceptedResourceRoles": [
+        "{{general.accepted_resources_roles}}"
+      ],
+   {{/general.accepted_resources_roles}}
+   {{^general.accepted_resources_roles}}
+      "acceptedResourceRoles": null,
+   {{/general.accepted_resources_roles}}
+
+  "labels": {
+    {{#haproxy_http.enabled}}
+    "HAPROXY_GROUP": "{{haproxy_http.haproxy_group}}",
+    "HAPROXY_0_PORT": "{{haproxy_http.external_port}}",
+    "HAPROXY_0_BACKEND_HEAD":"backend {backend}\n  balance {balance}\n  mode {mode}\n  timeout tunnel {{haproxy_http.tunnel_timeout}}\n",
+    "HAPROXY_1_FRONTEND_HEAD": "",
+    "HAPROXY_1_FRONTEND_BACKEND_GLUE": "",
+    "HAPROXY_2_FRONTEND_HEAD": "",
+    "HAPROXY_2_FRONTEND_BACKEND_GLUE": "",
+    "HAPROXY_3_FRONTEND_HEAD": "",
+    "HAPROXY_3_FRONTEND_BACKEND_GLUE": "",
+    "HAPROXY_3_BACKEND_HTTP_HEALTHCHECK_OPTIONS": "  option  httpchk GET {healthCheckPath} HTTP/1.1\\r\\nHost:\\ www\n  timeout check {healthCheckTimeoutSeconds}s\n"
+    {{#spark.spark_ui_enabled}}
+    ,"HAPROXY_4_FRONTEND_HEAD": "",
+    "HAPROXY_4_FRONTEND_BACKEND_GLUE": ""
+    {{/spark.spark_ui_enabled}}
+    {{/haproxy_http.enabled}}
+  },
+{{#security.use_dynamic_authentication}}
+  "secrets": {
+    "role": {
+      "source": "{{security.instance_app_role}}"
+    }
+  },
+{{/security.use_dynamic_authentication}}
+  "fetch": [
+    {{#hdfs.hdfs_conf_url}}
+    {"uri": "{{hdfs.hdfs_conf_url}}/core-site.xml"},
+    {"uri": "{{hdfs.hdfs_conf_url}}/hdfs-site.xml"}
+    {{/hdfs.hdfs_conf_url}}
+  ]
+}

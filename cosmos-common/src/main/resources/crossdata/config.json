@@ -1,0 +1,500 @@
+{
+  "type": "object",
+  "properties": {
+    "general": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Crossdata general configuration properties",
+      "properties": {
+        "name": {
+          "description": "The name of the Crossdata instance.",
+          "type": "string",
+          "default": "crossdata-1"
+        },
+        "cpus": {
+          "description": "CPU shares to allocate to each Crossdata instance.",
+          "type": "number",
+          "default": 1.0
+        },
+        "instances": {
+          "description": "Number of Crossdata instances to run.",
+          "type": "integer",
+          "default": 1
+        },
+        "mem": {
+          "description": "Memory (MiB) to allocate to each Crossdata instance.",
+          "type": "number",
+          "default": 3584.0,
+          "minimum": 3328.0
+        },
+        "cluster_label_constraint": {
+          "description": "Cluster label that will accept to launch Crossdata. (all, intelligence...)",
+          "type": "string",
+          "default": ""
+        },
+        "accepted_resources_roles": {
+          "description": "Mesos roles that will accept Crossdata. (slave_public, slave_private...)",
+          "type": "string",
+          "default": ""
+        },
+        "log_level": {
+          "description": "Set the log level: TRACE,DEBUG,INFO,WARN,ERROR and FATAL",
+          "type": "string",
+          "default": "INFO"
+        },
+        "force_pull_image": {
+          "description": "Force pull docker image every time instance is created.",
+          "type": "boolean",
+          "default": false
+        },
+        "storage_path": {
+          "description": "Path for storage of table creation without datasource",
+          "type": "string",
+          "default": "/tmp"
+        },
+        "streams_parallelism": {
+          "description": "Production parallelism of streams for responses",
+          "type": "integer",
+          "default": 2
+        }
+      },
+      "required": [
+        "cpus",
+        "name",
+        "instances",
+        "mem"
+      ]
+    },
+    "transport": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Configuration of Crossdata Http server properties",
+      "properties": {
+        "server_request_timeout": {
+          "description": "Maximum time waiting for receiving the first portion of data",
+          "type": "string",
+          "default": "4h"
+        },
+        "server_idle_timeout": {
+          "description": "Maximum time waiting for a portion of data",
+          "type": "string",
+          "default": "infinite"
+        },
+        "http_connection_pool_idle_timeout": {
+          "description": "Maximum time until a connection expires in the pool of connections",
+          "type": "string",
+          "default": "infinite"
+        },
+        "http_parsing_max_content_length": {
+          "description": "Default maximum content length which should not be exceeded by incoming request entities",
+          "type": "string",
+          "default": "1024m"
+        }
+      },
+      "required": [
+        "server_request_timeout",
+        "server_idle_timeout",
+        "http_connection_pool_idle_timeout"
+      ]
+    },
+    "security": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Configuration to secure Crossdata. If enabled secrets from vault will be retrieved and TLS and Kerberos applied",
+      "properties": {
+        "enabled": {
+          "description": "Enable TLS and Kerberos in Crossdata. If false, this section doesn't apply",
+          "type": "boolean",
+          "default": false
+        },
+        "akka_in_cluster_security": {
+          "description": "Enable TLS security inside Akka cluster",
+          "type": "boolean",
+          "default": false
+        },
+        "gosec_auth": {
+          "description": "Enable Gosec Authoritation. If false Gosec won't be enabled and all the operations will be authorized without supervision",
+          "type": "boolean",
+          "default": false
+        },
+        "gosec_version": {
+          "description": "GosSec version to use. Use 0.6.1 in R1RC1",
+          "type": "string",
+          "default": "0.11.1"
+        },
+        "gosec_plugin_management_principal": {
+          "description": "Gosec management principal",
+          "type": "string",
+          "default": "gosec-management"
+        },
+        "gosec_plugin_sso_principal": {
+          "description": "Gosec SSO principal",
+          "type": "string",
+          "default": "gosec-sso"
+        },
+        "vault_host": {
+          "description": "Vault host",
+          "type": "string",
+          "default": "vault.service.paas.labs.stratio.com"
+        },
+        "vault_port": {
+          "description": "Vault port.",
+          "type": "integer",
+          "default": 8200
+        },
+        "use_dynamic_authentication": {
+          "description": "Enable dynamic authentication \n NOTE: if enabled, vault token is not used",
+          "type": "boolean",
+          "default": false
+        },
+        "instance_app_role": {
+          "description": "App role used to recover a Vault token with a pre-defined policy",
+          "type": "string",
+          "default": "open"
+        },
+        "vault_token": {
+          "description": "Vault token. If dynamic authentication is enabled, the vault token is not used. Example: 4e6cafa2-faa4-acad-88f0-48eae1c24913",
+          "type": "string",
+          "default": ""
+        },
+        "crossdata_plugin_zk_connect": {
+          "description": "ZooKeeper policies hostname",
+          "type": "string",
+          "default": "gosec1.node.paas.labs.stratio.com:2181,gosec2.node.paas.labs.stratio.com:2181,gosec3.node.paas.labs.stratio.com:2181"
+        },
+        "zk_watchers_enabled": {
+          "description": "Enable zookeper watchers for Crossdata plugin leveraging cache interaction",
+          "type": "boolean",
+          "default": true
+        },
+        "crossdata_plugin_ldap_host": {
+          "description": "ldap hostname",
+          "type": "string",
+          "default": "ldap.integration.labs.stratio.com"
+        },
+        "crossdata_plugin_ldap_port": {
+          "description": "ldap port",
+          "type": "integer",
+          "default": 636
+        },
+        "crossdata_plugin_ldap_user_domain": {
+          "description": "ldap user domain",
+          "type": "string",
+          "default": "ou=People,dc=stratio,dc=com"
+        },
+        "crossdata_plugin_ldap_group_domain": {
+          "description": "ldap group domain",
+          "type": "string",
+          "default": "ou=Groups,dc=stratio,dc=com"
+        },
+        "crossdata_cns_allowed": {
+          "description": "List of allowed CNs by Crossdata",
+          "type": "string",
+          "default": "crossdata-1"
+        },
+        "crossdata_plugin_kafka_topic": {
+          "description": "auditing kafka topic",
+          "type": "string",
+          "default": "audit"
+        },
+        "crossdata_plugin_kafka_bootstrap": {
+          "description": "kafka connection",
+          "type": "string",
+          "default": "gosec1.node.paas.labs.stratio.com:9092,gosec2.node.paas.labs.stratio.com:9092,gosec3.node.paas.labs.stratio.com:9092"
+        },
+        "enable_crossdata_plugin_cache": {
+          "description": "Enable Crossdata Gosec plugin cache",
+          "type": "boolean",
+          "default": true
+        },
+        "crossdata_kerberos_renewal_interval": {
+          "description": "Time interval to renew the Kerberos tickets of the Crossdata servers",
+          "type": "string",
+          "default": "4h"
+        },
+        "ca-name-datastore": {
+          "description": "Trusted CA name used to validate datastores such as postgresql. CA is required by Spark executors",
+          "type": "string",
+          "default": "ca"
+        }
+
+      },
+      "required": ["enabled"]
+    },
+    "haproxy_http": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Marathon-lb configuration for expose Crossdata outside DCOS",
+      "properties": {
+        "enabled": {
+          "description": "Enable Crossdata in Marathon-lb. If false, this section doesn't apply",
+          "type": "boolean",
+          "default": false
+        },
+        "haproxy_group": {
+          "description": "Marathon-lb group in which Crossdata will be exposed",
+          "type": "string",
+          "default": "external"
+        },
+        "external_port": {
+          "description": "Port pre-assigned in the marathon-lb deploy",
+          "type": "integer",
+          "default": 10075
+        },
+        "tunnel_timeout": {
+          "description": "Maximum inactivity time on the client and server side",
+          "type": "string",
+          "default": "1500m"
+        }
+      },
+      "required": [
+        "enabled"
+      ]
+    },
+    "service_discovery": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Enable service discovery using kerberized zookeeper.",
+      "properties": {
+        "enabled": {
+          "description": "Enable service discovery using zookeeper for the Crossdata instances. If false this section doesn't apply.",
+          "type": "boolean",
+          "default": false
+        },
+        "zookeeper_connection_url": {
+          "description": "List of ip:port of the nodes where zookeeper is working",
+          "type": "string",
+          "default": "zk-0001-zkuserland.service.paas.labs.stratio.com:2181,zk-0002-zkuserland.service.paas.labs.stratio.com:2181,zk-0003-zkuserland.service.paas.labs.stratio.com:2181"
+        },
+        "interval_update": {
+          "description": "Interval time for logging nodes of the Crossdata cluster",
+          "type": "integer",
+          "default": 120
+        },
+        "cluster-id": {
+          "description": "Custom cluster identifier. if not enabled, instance name will be used as cluster-id",
+          "type": "string",
+          "default": ""
+        }
+      },
+      "required": [
+        "enabled"
+      ]
+    },
+    "zookeeper_catalog": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Persistent catalog using kerberized zookeeper.",
+      "properties": {
+        "enabled": {
+          "description": "Enable Zookeeper as catalog in Crossdata. (Warning, if not enabled, Derby will be used in local, so you won't have the catalog shared along the cluster",
+          "type": "boolean",
+          "default": false
+        },
+        "prefix": {
+          "description": "Use different prefix in each cluster for multitenant",
+          "type": "string",
+          "default": "crossdataCluster"
+        },
+        "zookeeper_connection_url": {
+          "description": "List of ip:port of the nodes where zookeeper is working",
+          "type": "string",
+          "default": "zk-0001-zkuserland.service.paas.labs.stratio.com:2181,zk-0002-zkuserland.service.paas.labs.stratio.com:2181,zk-0003-zkuserland.service.paas.labs.stratio.com:2181"
+        },
+        "connection_timeout": {
+          "description": "Zookeeper connection timeout in millis",
+          "type": "integer",
+          "default": 15000
+        },
+        "session_timeout": {
+          "description": "Zookeeper session timeout in millis",
+          "type": "integer",
+          "default": 60000
+        },
+        "retry_attempts": {
+          "description": "Retry attempts connecting to Zookeeper",
+          "type": "integer",
+          "default": 2
+        },
+        "retry_interval": {
+          "description": "Interval between attempts connecting to Zookeeper in millis",
+          "type": "integer",
+          "default": 10000
+        }
+      },
+      "required": [
+        "enabled"
+      ]
+    },
+    "spark": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "External spark configuration. If not enabled it will run with local[2]",
+      "properties": {
+        "enabled": {
+          "description": "Spark configuration. If not enabled each instance run a spark standalone internally",
+          "type": "boolean",
+          "default": false
+        },
+        "spark_ui_enabled": {
+          "description": "Enable the Spark UI web interface.",
+          "type": "boolean",
+          "default": false
+        },
+        "spark_master": {
+          "description": "Url of the spark master",
+          "type": "string",
+          "default": "mesos://leader.mesos:5050"
+        },
+        "spark_docker_image": {
+          "description": "Set the name of the docker image that the Spark executors will run in. The selected image must have Spark installed, as well as a compatible version of the Mesos library.",
+          "type": "string",
+          "default": "qa.stratio.com/stratio/stratio-spark:2.1.0.1"
+        },
+        "spark_executor_home": {
+          "description": "Set the directory in which Spark is installed on the executors in Mesos.",
+          "type": "string",
+          "default": "/opt/spark/dist"
+        },
+        "spark_local_dir": {
+          "description": "Set the directory where Spark will store shuffle data. (spark.local.dir)",
+          "type": "string",
+          "default": "/tmp/spark_data"
+        },
+        "spark_docker_volume_mount": {
+          "description": "Set the directory where Marathon will mount the spark_local_dir to store data and prevent /var/lib/docker space problems. (Must exists in all the agents)",
+          "type": "string",
+          "default": "/var/lib/spark_data"
+        },
+        "executor_memory": {
+          "description": "Spark executor memory in MB",
+          "type": "integer",
+          "default": 512
+        },
+        "cores": {
+          "description": "Maximum number of cores. Leave empty for all",
+          "type": "integer",
+          "default": 1
+        },
+        "shuffle_partitions": {
+          "description": "Number of shuffle partitions",
+          "type": "integer",
+          "default": 200
+        },
+        "autobroadcast_join_threshold": {
+          "description": "Configures the maximum size in bytes for a table that will be broadcast to all worker nodes when performing a join",
+          "type": "integer",
+          "default": 10485760
+        },
+        "broadcast_join_timeout": {
+          "description": "Timeout in seconds for the broadcast wait time in broadcast joins",
+          "type": "integer",
+          "default": 300
+        },
+        "kryo_serializer_buffer_max": {
+          "description": "Maximum allowable size of Kryo serialization buffer",
+          "type": "integer",
+          "default": 256
+        },
+        "disable_hdfs_delegation_token_cache": {
+          "description": "Disable delegation token cache of HDFS used by Spark",
+          "type": "boolean",
+          "default": true
+        },
+        "mesos_security_enabled": {
+          "description": "Mesos security enabled to launch frameworks",
+          "type": "boolean",
+          "default": false
+        },
+        "mesos_role": {
+          "description": "Selected nodes to deploy Spark framework through Mesos",
+          "type": "string",
+          "default": "open"
+        }
+      },
+      "required": [
+        "enabled"
+      ]
+    },
+    "hdfs": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "HDFS configuration. If a hdfs conf URL is provided the other options will be ignored",
+      "properties": {
+        "hdfs_conf_url": {
+          "type": "string",
+          "description": "URL base configuration: $hdfs_conf_url/hdfs-site.xml and $hdfs_conf_url/core-site.xml. When provided the other options will be ignored"
+        },
+        "hadoop_security_auth": {
+          "description": "core-site.xml (hadoop.security.authentication) HDFS",
+          "type": "string",
+          "default": "kerberos"
+        },
+        "hadoop_fs_name": {
+          "description": "core-site.xml (fs.default.name) HDFS",
+          "type": "string",
+          "default": "hdfs://10.200.0.74:8020"
+        },
+        "hadoop_rpc_protection": {
+          "description": "core-site.xml (hadoop.rpc.protection) HDFS",
+          "type": "string",
+          "default": "authentication"
+        },
+        "hadoop_dfs_encrypt_data_transfer": {
+          "description": "core-site.xml & hdfs-site.xml (dfs.encrypt.data.transfer) HDFS",
+          "type": "boolean",
+          "default": true
+        },
+        "hadoop_security_token_use_ip": {
+          "description": "hdfs-site.xml (hadoop.security.token.service.use_ip) HDFS",
+          "type": "boolean",
+          "default": false
+        },
+        "hadoop_namenode_krb_principal": {
+          "description": "hdfs-site.xml (dfs.namenode.kerberos.principal) HDFS",
+          "type": "string",
+          "default": "hdfs/10.200.0.74@DEMO.STRATIO.COM"
+        },
+        "hadoop_namnode_krb_principal_pattern": {
+          "description": "hdfs-site.xml (dfs.namenode.kerberos.principal.pattern) HDFS",
+          "type": "string",
+          "default": "hdfs/*@DEMO.STRATIO.COM"
+        },
+        "hadoop_dfs_encrypt_data_transfer_cipher_suites": {
+          "description": "hdfs-site.xml (dfs.encrypt.data.transfer.cipher.suites) HDFS",
+          "type": "string",
+          "default": "AES/CTR/NoPadding"
+        },
+        "hadoop_dfs_encrypt_data_transfer_cipher_key_bitlength": {
+          "description": "hdfs-site.xml (dfs.encrypt.data.transfer.cipher.key.bitlength) HDFS",
+          "type": "string",
+          "default": "128"
+        }
+      }
+    },
+    "network_segmentation": {
+      "type": "object",
+      "description": "Section to configure Stratio Crossdata to be deployed in a segmented network",
+      "properties": {
+        "use_network_segmentation": {
+          "description": "Enable Crossdata to be deployed in segmented network.",
+          "type": "boolean",
+          "default": false
+        },
+        "crossdata_network_name": {
+          "description": "Network's name where Crossdata will be added.",
+          "type": "string",
+          "default": "stratio"
+        },
+        "spark_network_name": {
+          "description": "Network's name where spark executors will be added.",
+          "type": "string",
+          "default": "stratio"
+        }
+      },
+      "required": [
+        "use_network_segmentation"
+      ]
+    }
+  }
+}

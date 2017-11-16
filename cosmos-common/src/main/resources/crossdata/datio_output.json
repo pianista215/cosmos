@@ -1,0 +1,173 @@
+{
+  "container": {
+    "docker": {
+      "forcePullImage": false,
+      "image": "qa.stratio.com/stratio/crossdata-scala211:2.9.0",
+      "network": "USER",
+      "parameters": [
+        {
+          "key": "volume",
+          "value": "/etc/krb5.conf:/etc/krb5.conf:ro"
+        }
+      ],
+      "portMappings": [
+        {
+          "containerPort": 8000,
+          "name": "13422"
+        },
+        {
+          "containerPort": 8001,
+          "name": "13420"
+        },
+        {
+          "containerPort": 8002,
+          "name": "5701"
+        },
+        {
+          "containerPort": 8003,
+          "name": "13423"
+        }
+      ],
+      "privileged": false
+    },
+    "type": "DOCKER",
+    "volumes": []
+  },
+  "cpus": 1,
+  "disk": 0,
+  "env": {
+    "APPROLE": {
+      "secret": "role"
+    },
+    "CROSSDATA_DRIVER_AKKA_HTTP_PARSING_MAX_CONTENT_LENGTH": "1024m",
+    "CROSSDATA_HDFS_DELEGATION_TOKEN_DISABLE_CACHE": "true",
+    "CROSSDATA_LOG_LEVEL": "INFO",
+    "CROSSDATA_SERVER_AKKA_HTTP_SERVER_PARSING_MAX_CONTENT_LENGTH": "1024m",
+    "CROSSDATA_SERVER_AKKA_REMOTE_NETTY_SSL_ENABLE_SSL": "false",
+    "CROSSDATA_SERVER_CONFIG_CN": "crossdata-1",
+    "CROSSDATA_SERVER_CONFIG_CN_ENABLED": "true",
+    "CROSSDATA_SERVER_CONFIG_KERBEROS_RENEWAL_INTERVAL": "4h",
+    "CROSSDATA_SERVER_CONFIG_SPARK_CORES_MAX": "1",
+    "CROSSDATA_SERVER_CONFIG_SPARK_EXECUTOR_MEMORY": "512M",
+    "CROSSDATA_SERVER_CONFIG_SPARK_KRYOSERIALIZER_BUFFER_MAX": "256M",
+    "CROSSDATA_SERVER_CONFIG_SPARK_LOCAL_DIR": "/tmp/spark_data",
+    "CROSSDATA_SERVER_CONFIG_SPARK_MASTER": "mesos://leader.mesos:5050",
+    "CROSSDATA_SERVER_CONFIG_SPARK_MESOS_EXECUTOR_DOCKER_IMAGE": "qa.stratio.com/stratio/stratio-spark:2.1.0.1",
+    "CROSSDATA_SERVER_CONFIG_SPARK_MESOS_EXECUTOR_DOCKER_VOLUMES": "/var/lib/spark_data:/tmp/spark_data:rw,/etc/krb5.conf:/etc/krb5.conf:ro,/etc/pki/ca-trust/extracted/java/cacerts/:/etc/ssl/certs/java/cacerts:ro",
+    "CROSSDATA_SERVER_CONFIG_SPARK_MESOS_EXECUTOR_HOME": "/opt/spark/dist",
+    "CROSSDATA_SERVER_CONFIG_SPARK_MESOS_ROLE": "open",
+    "CROSSDATA_SERVER_CONFIG_SPARK_SQL_AUTOBROADCASTJOINTHRESHOLD": "10485760",
+    "CROSSDATA_SERVER_CONFIG_SPARK_SQL_BROADCASTJOINTIMEOUT": "300",
+    "CROSSDATA_SERVER_CONFIG_SPARK_SQL_SHUFFLE_PARTITIONS": "200",
+    "CROSSDATA_SERVER_HTTP_HOST_CONNECTION_POOL_IDLE_TIMEOUT": "infinite",
+    "CROSSDATA_SERVER_HTTP_IDLE_TIMEOUT": "infinite",
+    "CROSSDATA_SERVER_HTTP_REQUEST_EXECUTION_TIMEOUT": "4h",
+    "CROSSDATA_SERVER_NETWORK": "xd",
+    "CROSSDATA_SERVER_SERIALIZATION_PARALLELISM": "2",
+    "CROSSDATA_SERVER_SERVICE_DISCOVERY_ACTIVATED": "true",
+    "CROSSDATA_SERVER_SERVICE_DISCOVERY_CLUSTER_ID": "crossdataAcceptance",
+    "CROSSDATA_SERVER_SERVICE_DISCOVERY_CLUSTER_LEADER_DELAY": "120",
+    "CROSSDATA_SERVER_SERVICE_DISCOVERY_URL": "zk-0001-zkuserland.service.paas.labs.stratio.com:2181,zk-0002-zkuserland.service.paas.labs.stratio.com:2181,zk-0003-zkuserland.service.paas.labs.stratio.com:2181",
+    "CROSSDATA_SERVER_SPARK_EXECUTOR_CA_NAME": "ca",
+    "CROSSDATA_SERVER_SPARK_NETWORK": "xdspark",
+    "CROSSDATA_SERVER_SPARK_UI_ENABLED": "false",
+    "CROSSDATA_SERVER_TLS_HEADER_INFO": "on",
+    "CROSSDATA_STORAGE_PATH": "/tmp",
+    "DUMMY": "",
+    "GOSEC_VERSION": "0.11.1",
+    "HADOOP_CONFIG_URL": "http://example.com/",
+    "HADOOP_DFS_ENCRYPT_DATA_CIPHER_KEY_BITLENGTH": "128",
+    "HADOOP_DFS_ENCRYPT_DATA_TRANSFER": "true",
+    "HADOOP_DFS_ENCRYPT_DATA_TRANSFER_CIPHER_SUITES": "AES/CTR/NoPadding",
+    "HADOOP_FS_DEFAULT_NAME": "hdfs://10.200.0.74:8020",
+    "HADOOP_NAMENODE_KERBEROS_PRINCIPAL": "hdfs/10.200.0.74@DEMO.STRATIO.COM",
+    "HADOOP_NAMENODE_KERBEROS_PRINCIPAL_PATTERN": "hdfs/*@DEMO.STRATIO.COM",
+    "HADOOP_RPC_PROTECTION": "authentication",
+    "HADOOP_SECURITY_AUTH": "kerberos",
+    "HADOOP_SECURITY_TOKEN_USE_IP": "false",
+    "MESOS_SECURITY_ENABLED": "enabled",
+    "TENANT_NAME": "crossdata-1",
+    "VAULT_HOST": "vault.service.paas.labs.stratio.com",
+    "VAULT_PORT": "8200",
+    "XD_CATALOG": "Zookeeper",
+    "XD_CATALOG_PREFIX": "crossdataAcceptance",
+    "XD_CATALOG_ZOOKEEPER_CONNECTION_STRING": "zk-0001-zkuserland.service.paas.labs.stratio.com:2181,zk-0002-zkuserland.service.paas.labs.stratio.com:2181,zk-0003-zkuserland.service.paas.labs.stratio.com:2181",
+    "XD_CATALOG_ZOOKEEPER_CONNECTION_TIMEOUT": "15000",
+    "XD_CATALOG_ZOOKEEPER_RETRY_ATTEMPS": "2",
+    "XD_CATALOG_ZOOKEEPER_RETRY_INTERVAL": "10000",
+    "XD_CATALOG_ZOOKEEPER_SESSION_TIMEOUT": "60000",
+    "XD_PLUGIN_CACHE_ENABLED": "true",
+    "XD_PLUGIN_INSTANCE": "crossdata-1",
+    "XD_PLUGIN_KAFKA_BOOTSTRAP": "gosec1.node.paas.labs.stratio.com:9092,gosec2.node.paas.labs.stratio.com:9092,gosec3.node.paas.labs.stratio.com:9092",
+    "XD_PLUGIN_KAFKA_TOPIC": "audit",
+    "XD_PLUGIN_LDAP_GROUP_DOMAIN": "ou=Groups,dc=stratio,dc=com",
+    "XD_PLUGIN_LDAP_HOST": "ldap.integration.labs.stratio.com",
+    "XD_PLUGIN_LDAP_PORT": "636",
+    "XD_PLUGIN_LDAP_USER_DOMAIN": "ou=People,dc=stratio,dc=com",
+    "XD_PLUGIN_MGMT_PRINCIPAL": "gosec-management",
+    "XD_PLUGIN_SSO_PRINCIPAL": "gosec-sso",
+    "XD_PLUGIN_ZK_CONNECT": "gosec1.node.paas.labs.stratio.com:2181,gosec2.node.paas.labs.stratio.com:2181,gosec3.node.paas.labs.stratio.com:2181",
+    "XD_PLUGIN_ZOOKEEPER_WATCHERS": "true",
+    "XD_SECURITY_ENABLED": "true"
+  },
+  "fetch": [
+    {
+      "uri": "http://example.com//core-site.xml"
+    },
+    {
+      "uri": "http://example.com//hdfs-site.xml"
+    }
+  ],
+  "healthChecks": [
+    {
+      "gracePeriodSeconds": 40,
+      "ignoreHttp1xx": false,
+      "intervalSeconds": 120,
+      "maxConsecutiveFailures": 0,
+      "path": "/health/status/ecosystem",
+      "portIndex": 3,
+      "protocol": "HTTP",
+      "timeoutSeconds": 20
+    },
+    {
+      "gracePeriodSeconds": 60,
+      "ignoreHttp1xx": false,
+      "intervalSeconds": 120,
+      "maxConsecutiveFailures": 1,
+      "path": "/health/status/internal",
+      "portIndex": 3,
+      "protocol": "HTTP",
+      "timeoutSeconds": 20
+    }
+  ],
+  "id": "/crossdata-1",
+  "instances": 0,
+  "ipAddress": {
+    "networkName": "xd"
+  },
+  "labels": {
+    "DCOS_PACKAGE_IS_FRAMEWORK": "false",
+    "DCOS_PACKAGE_METADATA": "eyJwYWNrYWdpbmdWZXJzaW9uIjoiMi4wIiwibmFtZSI6ImNyb3NzZGF0YTIiLCJ2ZXJzaW9uIjoiMi45LjAiLCJtYWludGFpbmVyIjoicGFhc0BzdHJhdGlvLmNvbSIsImRlc2NyaXB0aW9uIjoiU3RyYXRpbyBDcm9zc2RhdGEiLCJ0YWdzIjpbImNyb3NzZGF0YSIsInN0cmF0aW8iLCJzcGFyayIsInNxbCIsImRhdGFzb3VyY2VzIl0sInNlbGVjdGVkIjp0cnVlLCJmcmFtZXdvcmsiOmZhbHNlLCJwb3N0SW5zdGFsbE5vdGVzIjoiU3RyYXRpbyBDcm9zc2RhdGEgaW5zdGFsbGVkIHN1Y2Nlc3NmdWwiLCJwb3N0VW5pbnN0YWxsTm90ZXMiOiJTdHJhdGlvIENyb3NzZGF0YSB1bmluc3RhbGxlZCBzdWNjZXNzZnVsIiwibGljZW5zZXMiOlt7Im5hbWUiOiJBcGFjaGUgTGljZW5zZSBWZXJzaW9uIDIuMCIsInVybCI6Imh0dHBzOi8vZ2l0aHViLmNvbS9TdHJhdGlvL0Nyb3NzZGF0YS9ibG9iL21hc3Rlci9MSUNFTlNFIn1dLCJpbWFnZXMiOnsiaWNvbi1zbWFsbCI6Imh0dHA6Ly9hc3NldHMuc3RyYXRpby5jb20vbG9nb3MvbG9nb19zdHJhdGlvX3VuaXZlcnNlLnBuZyIsImljb24tbWVkaXVtIjoiaHR0cDovL2Fzc2V0cy5zdHJhdGlvLmNvbS9sb2dvcy9sb2dvX3N0cmF0aW9fdW5pdmVyc2UucG5nIiwiaWNvbi1sYXJnZSI6Imh0dHA6Ly9hc3NldHMuc3RyYXRpby5jb20vbG9nb3MvbG9nb19zdHJhdGlvX3VuaXZlcnNlLnBuZyJ9fQ==",
+    "DCOS_PACKAGE_NAME": "crossdata2",
+    "DCOS_PACKAGE_REGISTRY_VERSION": "2.0",
+    "DCOS_PACKAGE_RELEASE": "8",
+    "DCOS_PACKAGE_SOURCE": "http://iodo.stratio.com:8080/repo",
+    "DCOS_PACKAGE_VERSION": "2.9.0",
+    "HAPROXY_0_BACKEND_HEAD": "backend {backend}\n  balance {balance}\n  mode {mode}\n  timeout tunnel 1500m\n",
+    "HAPROXY_0_PORT": "10069",
+    "HAPROXY_1_FRONTEND_BACKEND_GLUE": "",
+    "HAPROXY_1_FRONTEND_HEAD": "",
+    "HAPROXY_2_FRONTEND_BACKEND_GLUE": "",
+    "HAPROXY_2_FRONTEND_HEAD": "",
+    "HAPROXY_3_BACKEND_HTTP_HEALTHCHECK_OPTIONS": "  option  httpchk GET {healthCheckPath} HTTP/1.1\\r\\nHost:\\ www\n  timeout check {healthCheckTimeoutSeconds}s\n",
+    "HAPROXY_3_FRONTEND_BACKEND_GLUE": "",
+    "HAPROXY_3_FRONTEND_HEAD": "",
+    "HAPROXY_GROUP": "external"
+  },
+  "mem": 3584,
+  "secrets": {
+    "role": {
+      "source": "open"
+    }
+  }
+}
