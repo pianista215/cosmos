@@ -6,7 +6,7 @@ import java.nio.charset.StandardCharsets
 import com.mesosphere.cosmos.circe.Decoders.parse
 import com.mesosphere.cosmos.thirdparty.marathon.model.AppId
 import com.mesosphere.universe.v3.model._
-import io.circe.JsonObject
+import io.circe.{Json, JsonObject}
 
 import scala.io.Source
 
@@ -49,7 +49,7 @@ object Main extends App {
     Some(appId)
   ).get
 
-  println(render.toString())
+  println(Json.fromJsonObject(render))
 
 
   private[this] def classpathJsonString(resourceName: String): String = {
