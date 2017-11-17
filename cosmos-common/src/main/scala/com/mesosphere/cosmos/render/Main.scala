@@ -20,6 +20,7 @@ object Main extends App {
   val mustacheBytes = ByteBuffer.wrap(mustache.getBytes(StandardCharsets.UTF_8))
 
   val p = classpathJsonString("/crossdata/packages.json")
+  val packages = parse(p).asObject.get
 
   val r = classpathJsonString("/crossdata/resources.json")
   val resources = parse(r).asObject.get
@@ -32,11 +33,11 @@ object Main extends App {
   import com.netaporter.uri.dsl._
 
   val badPkg = V2Package(
-    name = "test",
-    version = Version("1.2.3"),
+    name = packages("name").get.asString.get,
+    version = Version(packages("version").get.asString.get),
     releaseVersion = ReleaseVersion(0),
-    maintainer = "maintainer",
-    description = "description",
+    maintainer = packages("maintainer").get.asString.get,
+    description = packages("description").get.asString.get,
     marathon = Marathon(mustacheBytes),
     config = Some(schema),
     resource = Some(PackageConverter.stringToResourceDefinition(r))
